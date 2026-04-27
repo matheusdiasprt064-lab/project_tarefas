@@ -12,7 +12,13 @@ API REST de gerenciamento de tarefas com autenticação JWT, desenvolvida com Sp
 - Maven
 - Swagger/OpenAPI
 
-## Como rodar
+## URL da API
+
+```
+https://project-tarefas.onrender.com
+```
+
+
 
 ### Pré-requisitos
 - Java 17+
