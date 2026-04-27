@@ -3,6 +3,8 @@ package com.tarefas.api.controller;
 import com.tarefas.api.repository.UsuarioRepository;
 import com.tarefas.api.security.JwtUtil;
 import com.tarefas.api.service.UsuarioService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -11,6 +13,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/auth")
+@Tag(name = "Autenticação")
 public class AuthController {
 
     private final UsuarioService usuarioService;
@@ -26,12 +29,14 @@ public class AuthController {
     }
 
     @PostMapping("/register")
+    @Operation(summary = "Registrar novo usuário")
     public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
         usuarioService.registrar(body.get("username"), body.get("password"));
         return ResponseEntity.ok("Usuário registrado com sucesso");
     }
 
     @PostMapping("/login")
+    @Operation(summary = "Login e geração de token JWT")
     public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
         var usuario = usuarioRepository.findByUsername(body.get("username"))
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));

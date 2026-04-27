@@ -1,5 +1,6 @@
 package com.tarefas.api.service;
 
+import com.tarefas.api.dto.TarefaResponseDTO;
 import com.tarefas.api.model.Tarefa;
 import com.tarefas.api.model.Usuario;
 import com.tarefas.api.repository.TarefaRepository;
@@ -26,15 +27,25 @@ public class TarefaService {
                 .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
     }
 
-    public List<Tarefa> listar() {
-        return tarefaRepository.findByUsuario(getUsuarioLogado());
+    public List<TarefaResponseDTO> listar() {
+        return tarefaRepository.findByUsuario(getUsuarioLogado())
+                .stream().map(TarefaResponseDTO::new).toList();
     }
 
-    public Tarefa adicionar(String descricao) {
+    public TarefaResponseDTO adicionar(String descricao) {
         Tarefa tarefa = new Tarefa();
         tarefa.setDescricao(descricao);
         tarefa.setUsuario(getUsuarioLogado());
-        return tarefaRepository.save(tarefa);
+        return new TarefaResponseDTO(tarefaRepository.save(tarefa));
+    }
+
+    public TarefaResponseDTO atualizar(Long id, String descricao) {
+        Tarefa tarefa = tarefaRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
+        if (!tarefa.getUsuario().getUsername().equals(getUsuarioLogado().getUsername()))
+            throw new RuntimeException("Sem permissão para atualizar esta tarefa");
+        tarefa.setDescricao(descricao);
+        return new TarefaResponseDTO(tarefaRepository.save(tarefa));
     }
 
     public void remover(Long id) {
