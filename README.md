@@ -1,6 +1,16 @@
-# Tarefas API
+# Task Manager API
 
 API REST de gerenciamento de tarefas com autenticação JWT, desenvolvida com Spring Boot e PostgreSQL.
+
+## 🌐 API Online
+```
+https://project-tarefas.onrender.com
+```
+
+## 📄 Swagger
+```
+https://project-tarefas.onrender.com/swagger-ui/index.html
+```
 
 ## Tecnologias
 
@@ -12,13 +22,7 @@ API REST de gerenciamento de tarefas com autenticação JWT, desenvolvida com Sp
 - Maven
 - Swagger/OpenAPI
 
-## URL da API
-
-```
-https://project-tarefas.onrender.com
-```
-
-
+## Como rodar localmente
 
 ### Pré-requisitos
 - Java 17+
