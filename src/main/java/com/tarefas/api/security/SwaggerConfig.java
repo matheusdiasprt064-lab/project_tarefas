@@ -21,7 +21,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Tarefas API")
-                        .description("API de gerenciamento de tarefas com autenticação JWT")
+                        .description("API de gerenciamento de tarefas com autenticacao JWT")
                         .version("1.0.0"));
     }
 }

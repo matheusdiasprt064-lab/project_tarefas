@@ -1,6 +1,9 @@
 package com.tarefas.api.service;
 
+import com.tarefas.api.dto.TarefaRequestDTO;
 import com.tarefas.api.dto.TarefaResponseDTO;
+import com.tarefas.api.exception.AcessoNegadoException;
+import com.tarefas.api.exception.RecursoNaoEncontradoException;
 import com.tarefas.api.model.Tarefa;
 import com.tarefas.api.model.Usuario;
 import com.tarefas.api.repository.TarefaRepository;
@@ -24,7 +27,7 @@ public class TarefaService {
     private Usuario getUsuarioLogado() {
         String username = SecurityContextHolder.getContext().getAuthentication().getName();
         return usuarioRepository.findByUsername(username)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Usuario nao encontrado"));
     }
 
     public List<TarefaResponseDTO> listar() {
@@ -32,27 +35,44 @@ public class TarefaService {
                 .stream().map(TarefaResponseDTO::new).toList();
     }
 
-    public TarefaResponseDTO adicionar(String descricao) {
+    public TarefaResponseDTO adicionar(TarefaRequestDTO dto) {
         Tarefa tarefa = new Tarefa();
-        tarefa.setDescricao(descricao);
+        aplicarDados(tarefa, dto);
         tarefa.setUsuario(getUsuarioLogado());
         return new TarefaResponseDTO(tarefaRepository.save(tarefa));
     }
 
-    public TarefaResponseDTO atualizar(Long id, String descricao) {
-        Tarefa tarefa = tarefaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
-        if (!tarefa.getUsuario().getUsername().equals(getUsuarioLogado().getUsername()))
-            throw new RuntimeException("Sem permissão para atualizar esta tarefa");
-        tarefa.setDescricao(descricao);
+    public TarefaResponseDTO atualizar(Long id, TarefaRequestDTO dto) {
+        Tarefa tarefa = buscarTarefaDoUsuario(id);
+        aplicarDados(tarefa, dto);
         return new TarefaResponseDTO(tarefaRepository.save(tarefa));
     }
 
     public void remover(Long id) {
-        Tarefa tarefa = tarefaRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Tarefa não encontrada"));
-        if (!tarefa.getUsuario().getUsername().equals(getUsuarioLogado().getUsername()))
-            throw new RuntimeException("Sem permissão para remover esta tarefa");
+        Tarefa tarefa = buscarTarefaDoUsuario(id);
         tarefaRepository.delete(tarefa);
+    }
+
+    private Tarefa buscarTarefaDoUsuario(Long id) {
+        Tarefa tarefa = tarefaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Tarefa nao encontrada"));
+        if (!tarefa.getUsuario().getUsername().equals(getUsuarioLogado().getUsername())) {
+            throw new AcessoNegadoException("Sem permissao para acessar esta tarefa");
+        }
+        return tarefa;
+    }
+
+    private void aplicarDados(Tarefa tarefa, TarefaRequestDTO dto) {
+        tarefa.setTitulo(limpar(dto.getTitulo()));
+        tarefa.setDescricao(dto.getDescricao().trim());
+        tarefa.setDataVencimento(dto.getDataVencimento());
+        if (dto.getConcluida() != null) {
+            tarefa.setConcluida(dto.getConcluida());
+        }
+    }
+
+    private String limpar(String valor) {
+        if (valor == null || valor.trim().isEmpty()) return null;
+        return valor.trim();
     }
 }

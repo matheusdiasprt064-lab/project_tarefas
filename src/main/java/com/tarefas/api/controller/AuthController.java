@@ -1,19 +1,20 @@
 package com.tarefas.api.controller;
 
+import com.tarefas.api.dto.AuthRequestDTO;
+import com.tarefas.api.dto.AuthResponseDTO;
 import com.tarefas.api.repository.UsuarioRepository;
 import com.tarefas.api.security.JwtUtil;
 import com.tarefas.api.service.UsuarioService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.Map;
-
 @RestController
 @RequestMapping("/auth")
-@Tag(name = "Autenticação")
+@Tag(name = "Autenticacao")
 public class AuthController {
 
     private final UsuarioService usuarioService;
@@ -29,20 +30,20 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    @Operation(summary = "Registrar novo usuário")
-    public ResponseEntity<?> register(@RequestBody Map<String, String> body) {
-        usuarioService.registrar(body.get("username"), body.get("password"));
-        return ResponseEntity.ok("Usuário registrado com sucesso");
+    @Operation(summary = "Registrar novo usuario")
+    public ResponseEntity<String> register(@Valid @RequestBody AuthRequestDTO body) {
+        usuarioService.registrar(body.getUsername(), body.getPassword());
+        return ResponseEntity.ok("Usuario registrado com sucesso");
     }
 
     @PostMapping("/login")
-    @Operation(summary = "Login e geração de token JWT")
-    public ResponseEntity<?> login(@RequestBody Map<String, String> body) {
-        var usuario = usuarioRepository.findByUsername(body.get("username"))
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-        if (!passwordEncoder.matches(body.get("password"), usuario.getPassword()))
-            return ResponseEntity.status(401).body("Senha incorreta");
-        String token = jwtUtil.generateToken(usuario.getUsername());
-        return ResponseEntity.ok(Map.of("token", token));
+    @Operation(summary = "Login e geracao de token JWT")
+    public ResponseEntity<?> login(@Valid @RequestBody AuthRequestDTO body) {
+        var usuario = usuarioRepository.findByUsername(body.getUsername().trim());
+        if (usuario.isEmpty() || !passwordEncoder.matches(body.getPassword(), usuario.get().getPassword())) {
+            return ResponseEntity.status(401).body("Usuario ou senha invalidos");
+        }
+        String token = jwtUtil.generateToken(usuario.get().getUsername());
+        return ResponseEntity.ok(new AuthResponseDTO(token));
     }
 }

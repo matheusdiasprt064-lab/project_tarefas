@@ -5,6 +5,7 @@ import io.jsonwebtoken.security.Keys;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.nio.charset.StandardCharsets;
 import java.security.Key;
 import java.util.Date;
 
@@ -18,7 +19,10 @@ public class JwtUtil {
     private long expiration;
 
     private Key getKey() {
-        return Keys.hmacShaKeyFor(secret.getBytes());
+        if (secret == null || secret.length() < 32) {
+            throw new IllegalStateException("jwt.secret deve ter pelo menos 32 caracteres");
+        }
+        return Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
     }
 
     public String generateToken(String username) {

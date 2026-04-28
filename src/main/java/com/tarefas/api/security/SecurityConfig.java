@@ -30,7 +30,7 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         return username -> {
             var usuario = usuarioRepository.findByUsername(username)
-                    .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado"));
+                    .orElseThrow(() -> new UsernameNotFoundException("Usuario nao encontrado"));
             return User.withUsername(usuario.getUsername())
                     .password(usuario.getPassword())
                     .roles("USER")

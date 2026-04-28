@@ -11,7 +11,7 @@ public class HomeController {
     @GetMapping("/")
     public Map<String, String> home() {
         return Map.of(
-            "api", "Task Manager API 🚀",
+            "api", "Task Manager API",
             "docs", "https://project-tarefas.onrender.com/swagger-ui/index.html",
             "status", "https://project-tarefas.onrender.com/status"
         );

@@ -1,14 +1,16 @@
 # Task Manager API
 
-API REST de gerenciamento de tarefas com autenticação JWT, desenvolvida com Spring Boot e PostgreSQL.
+API REST de gerenciamento de tarefas com autenticacao JWT, desenvolvida com Spring Boot e PostgreSQL.
 
-## 🌐 API Online
-```
+## API online
+
+```text
 https://project-tarefas.onrender.com
 ```
 
-## 📄 Swagger
-```
+## Swagger
+
+```text
 https://project-tarefas.onrender.com/swagger-ui/index.html
 ```
 
@@ -24,58 +26,75 @@ https://project-tarefas.onrender.com/swagger-ui/index.html
 
 ## Como rodar localmente
 
-### Pré-requisitos
+### Pre-requisitos
+
 - Java 17+
 - Maven
 - PostgreSQL
 
-### Configuração do banco
-Crie um banco e um usuário no PostgreSQL:
+### Banco de dados
+
 ```sql
 CREATE USER tarefas_user WITH PASSWORD 'sua_senha';
 CREATE DATABASE tarefas_db;
 GRANT ALL PRIVILEGES ON DATABASE tarefas_db TO tarefas_user;
 ```
 
-### Configuração da aplicação
-Crie o arquivo `src/main/resources/application.properties`:
+### Configuracao
+
+O projeto aceita variaveis de ambiente, mas tambem possui valores padrao para desenvolvimento local:
+
 ```properties
-spring.datasource.url=jdbc:postgresql://localhost:5432/tarefas_db
-spring.datasource.username=tarefas_user
-spring.datasource.password=sua_senha
-spring.jpa.hibernate.ddl-auto=update
-jwt.secret=seu-secret-com-minimo-32-caracteres-aqui
-jwt.expiration=86400000
+DATABASE_URL=jdbc:postgresql://localhost:5432/tarefas_db
+DATABASE_USERNAME=tarefas_user
+DATABASE_PASSWORD=sua_senha
+JWT_SECRET=seu-secret-com-minimo-32-caracteres-aqui
+CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
 ```
 
 ### Rodando
+
 ```bash
 mvn spring-boot:run
 ```
 
-## Documentação
+Swagger local:
 
-Acesse o Swagger em: [http://localhost:8080/swagger-ui/index.html](http://localhost:8080/swagger-ui/index.html)
+```text
+http://localhost:8080/swagger-ui/index.html
+```
 
 ## Endpoints
 
-### Autenticação
-| Método | Rota | Descrição |
+### Autenticacao
+
+| Metodo | Rota | Descricao |
 |--------|------|-----------|
-| POST | `/auth/register` | Registrar usuário |
+| POST | `/auth/register` | Registrar usuario |
 | POST | `/auth/login` | Login, retorna token JWT |
 
-### Tarefas (requer token)
-| Método | Rota | Descrição |
+### Tarefas
+
+Requer header:
+
+```text
+Authorization: Bearer <token>
+```
+
+| Metodo | Rota | Descricao |
 |--------|------|-----------|
-| GET | `/tarefas` | Listar tarefas do usuário |
+| GET | `/tarefas` | Listar tarefas do usuario |
 | POST | `/tarefas` | Criar tarefa |
 | PUT | `/tarefas/{id}` | Atualizar tarefa |
 | DELETE | `/tarefas/{id}` | Remover tarefa |
 
-## Autenticação
+Exemplo de tarefa:
 
-Após o login, use o token retornado no header:
-```
-Authorization: Bearer <token>
+```json
+{
+  "titulo": "Estudos",
+  "descricao": "Revisar Spring Security",
+  "concluida": false,
+  "dataVencimento": "2026-05-10"
+}
 ```
