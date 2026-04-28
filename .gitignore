@@ -6,3 +6,5 @@ target/
 .env.*
 *.env
 .vscode/
+tarefas.txt
+tarefas-src.txt
