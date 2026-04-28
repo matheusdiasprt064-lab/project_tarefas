@@ -47,10 +47,12 @@ O projeto aceita variaveis de ambiente, mas tambem possui valores padrao para de
 ```properties
 DATABASE_URL=jdbc:postgresql://localhost:5432/tarefas_db
 DATABASE_USERNAME=tarefas_user
-DATABASE_PASSWORD=sua_senha
-JWT_SECRET=seu-secret-com-minimo-32-caracteres-aqui
+DATABASE_PASSWORD=<senha_local_do_postgres>
+JWT_SECRET=<secret_forte_com_minimo_32_caracteres>
 CORS_ALLOWED_ORIGINS=http://localhost:3000,http://localhost:5173
 ```
+
+Nao use os valores de exemplo em producao. Configure `DATABASE_PASSWORD` e `JWT_SECRET` como variaveis de ambiente reais no servidor.
 
 ### Rodando
 
