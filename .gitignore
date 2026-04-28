@@ -2,3 +2,7 @@ target/
 *.class
 *.jar
 .mvn/
+.env
+.env.*
+*.env
+.vscode/
