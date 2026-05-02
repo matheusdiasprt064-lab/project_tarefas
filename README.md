@@ -1,4 +1,4 @@
-# Project Tarefas
+# Projeto de Sistema de Agendamentos e Consultas.
 
 Repositorio unificado do projeto de lista de tarefas.
 
